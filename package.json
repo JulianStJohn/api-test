@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@base2/pretty-print-object": "^1.0.2",
+    "mocha": "^10.0.0",
+    "superagent": "^8.0.0"
+  },
+  "type": "module"
+}
