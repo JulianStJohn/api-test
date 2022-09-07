@@ -11,12 +11,19 @@ export const version = () => {
 
 
 export class CookieJar {
+
+    // First version of this class discards most of the information and just saves the 
+    // cookie under the hostname. 
+
     constructor() {
         // store cookies as a key value pair - key is the domain for the time being
         this.cookies = {};
+        this.cookieInformationKeys = ['Expires','Max-Age','Domain','Path','SameSite','securityPolicy']
     }
     parseCookieString(cookieString){
-        /* From: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
+        /* 
+        From: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
+        
         Possible cookie types to parse: 
         
         Set-Cookie: <cookie-name>=<cookie-value>
@@ -26,16 +33,13 @@ export class CookieJar {
         Set-Cookie: <cookie-name>=<cookie-value>; Path=<path-value>
         Set-Cookie: <cookie-name>=<cookie-value>; Secure
         Set-Cookie: <cookie-name>=<cookie-value>; HttpOnly
-
         Set-Cookie: <cookie-name>=<cookie-value>; SameSite=Strict
         Set-Cookie: <cookie-name>=<cookie-value>; SameSite=Lax
         Set-Cookie: <cookie-name>=<cookie-value>; SameSite=None; Secure
 
         // Multiple attributes are also possible, for example:
         Set-Cookie: <cookie-name>=<cookie-value>; Domain=<domain-value>; Secure; HttpOnly
-        */
-
-        /* 
+     
         parseCookieString returns an object with the cookie key value pairs: 
         {
             id: 'abc',
@@ -56,20 +60,34 @@ export class CookieJar {
                 const [key, ...value]=cookieFragment.split("=");
                 cookieValues[key] = value.join('');
             }else{
-                cookieValues['securityPolicy'] = (cookieValues['securityPolicy'] === undefined) ? [] : cookieValues['securityPolicy'];
+                if (cookieValues['securityPolicy'] === undefined) cookieValues['securityPolicy'] = []; 
                 cookieValues['securityPolicy'].push(cookieFragment);
             }
         });
-        console.log(prettyPrint(cookieValues))
+        //console.log(prettyPrint(cookieValues))
         return cookieValues;
     }
-    addCookie(url,  cookieString){
-        const urlObject = new URL(myUrl);
-        const hostName = urlObject.hostname;
-
+    getCookieKeyFromParsedCookie(parsedCookie){
+        return Object.keys(parsedCookie).filter((key) => { return !this.cookieInformationKeys.includes(key) })[0];
     }
-
- 
+    getHostNameFromUrl(url){
+        const urlObject = new URL(url);
+        const hostName = urlObject.hostname;
+        return hostName
+    }
+    addCookie(url,  cookieString){
+        const hostName = this.getHostNameFromUrl(url)
+        const parsedCookie = this.parseCookieString(cookieString)
+        const cookieKey = this.getCookieKeyFromParsedCookie(parsedCookie)
+        const cookieKeyValueString = `${cookieKey}=${parsedCookie[cookieKey]}` 
+        if (this.cookies[hostName] === undefined ) this.cookies[hostName] = []
+        this.cookies[hostName].push(cookieKeyValueString) 
+    }
+    getCookies(url){
+        //console.log(prettyPrint(this.cookies)) 
+        const hostName = this.getHostNameFromUrl(url)
+        return this.cookies[hostName].join("; ")
+    }
 }
 
 
