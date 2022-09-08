@@ -29,8 +29,12 @@ describe('CookieJar Class', function () {
     const url = "http://search.test.com.au/homePage.html"
     const cookieString = "profile=mark; domain=.test.com.au; Secure; HttpOnly;";
     
-    it('getCookieKeyFromParsedCookie should return the cookie Key',() => {
+    it('getCookies called before addCookie should return an empty string',() => {
       const jar = new CookieJar();
+      assert.equal(jar.getCookies(url), "");
+    })
+     
+    it('getCookieKeyFromParsedCookie should return the cookie Key',() => {
       assert.equal(jar.getCookieKeyFromParsedCookie(jar.parseCookieString(cookieString)), "profile");
     })
     
@@ -44,7 +48,7 @@ describe('CookieJar Class', function () {
       const jar3 = new CookieJar();
       jar3.addCookie(url, cookieString); 
       jar3.addCookie(url, "sess=1");
-      assert.equal(jar3.getCookies(url), "profile=mark; sess=1");
+      assert.equal(jar3.getCookies(url), "profile=mark; sess=1;");
     }) 
 
 

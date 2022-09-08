@@ -7,8 +7,13 @@ export const version = () => {
     return "v0.1"
 }
 
-
-
+// Cookies and request.agent()
+// In Node SuperAgent does not save cookies by default, but you can use the .agent() method to create a copy of SuperAgent that saves cookies.
+// However I found some discrepancies in calls: 
+//   * calls to 'www.realestate.com.au' will not respond with 'set-cookie when made from request.agent().get, 
+//   * but calls to 'www.realestate.com.au' will respond with 'set-cookie' when made from request.get, 
+//   * calls to 'https://www.realestate.com.au' will respond with 'set-cooki when made from request.agent().get, 
+// So I'm using my own custom cookie jar: 
 
 export class CookieJar {
 
@@ -22,24 +27,9 @@ export class CookieJar {
     }
     parseCookieString(cookieString){
         /* 
-        From: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
+        Cookie syntax from: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
+        Set-Cookie: <cookie-name>=<cookie-value>; Expires=<date>;  Max-Age=<number>; Domain=<domain-value>; Path=<path-value>; SameSite=<value>; Secure; HttpOnly;
         
-        Possible cookie types to parse: 
-        
-        Set-Cookie: <cookie-name>=<cookie-value>
-        Set-Cookie: <cookie-name>=<cookie-value>; Expires=<date>
-        Set-Cookie: <cookie-name>=<cookie-value>; Max-Age=<number>
-        Set-Cookie: <cookie-name>=<cookie-value>; Domain=<domain-value>
-        Set-Cookie: <cookie-name>=<cookie-value>; Path=<path-value>
-        Set-Cookie: <cookie-name>=<cookie-value>; Secure
-        Set-Cookie: <cookie-name>=<cookie-value>; HttpOnly
-        Set-Cookie: <cookie-name>=<cookie-value>; SameSite=Strict
-        Set-Cookie: <cookie-name>=<cookie-value>; SameSite=Lax
-        Set-Cookie: <cookie-name>=<cookie-value>; SameSite=None; Secure
-
-        // Multiple attributes are also possible, for example:
-        Set-Cookie: <cookie-name>=<cookie-value>; Domain=<domain-value>; Secure; HttpOnly
-     
         parseCookieString returns an object with the cookie key value pairs: 
         {
             id: 'abc',
@@ -86,7 +76,9 @@ export class CookieJar {
     getCookies(url){
         //console.log(prettyPrint(this.cookies)) 
         const hostName = this.getHostNameFromUrl(url)
-        return this.cookies[hostName].join("; ")
+        if (this.cookies[hostName] === undefined) return "";
+        return (this.cookies[hostName].length == 1) ? this.cookies[hostName][0] : this.cookies[hostName].join("; ") + ";" ;
+       this.cookies[hostName].join("; ")
     }
 }
 
@@ -97,51 +89,29 @@ export class CookieJar {
 const cookiedUrl = "https://www.realestate.com.au"
 //const cookiedUrl = "www.realestate.com.au"
 //const cookiedUrl = "www.google.com"
+const cookieJar = new CookieJar(); 
 
-await request
-.get(cookiedUrl)
-.then(res => {
-   // res.body, res.headers, res.status
-   // console.log(res.body)
-   // console.log(res.text)
-   console.log("request() response:")
-   //console.log(prettyPrint(Object.keys(res)))
-   console.log(res.headers['set-cookie'])
-})
-.catch(err => {
-   // err.message, err.response
-   console.log(err.message)
-});
+export const getSetCookieHeaderFromResponse = async (url, cookieJar) => {
+    let storedCookies =  cookieJar.getCookies(url) 
+    let headers = (storedCookies == "") ? { } : { 'Cookie' : storedCookies }
+    let response = await request.get(url).set(headers)
+    let setCookieHeader = await response.headers['set-cookie'] 
+    if(setCookieHeader.length > 0) setCookieHeader.map((cookieString) => {cookieJar.addCookie(url, cookieString); }); 
+    return setCookieHeader; 
 
-
-// Cookies and request.agent()
-// In Node SuperAgent does not save cookies by default, but you can use the .agent() method to create a copy of SuperAgent that saves cookies.
-// However I found some discrepancies in calls: 
-//   * calls to 'www.realestate.com.au' will not respond with 'set-cooki when made from request.agent().get, 
-//   * but calls to 'www.realestate.com.au' will respond with 'set-cookie' when made from request.get, 
-//   * calls to 'https://www.realestate.com.au' will respond with 'set-cooki when made from request.agent().get, 
-
-const agent = request.agent();
-await agent
-.get(cookiedUrl)
-.then(data => {
-    console.log("agent.request() response:")
-    
-    console.log(data.headers['set-cookie'])
-})
-
-const secondRequest = () => {
+     // res.body, res.headers, res.status
+       // console.log(res.body)
+       // console.log(res.text)
+       //console.log("request() response:")
+        // console.log(prettyPrint(Object.keys(res)))
 
 }
+console.log("Where storing cookies, ")
+console.log("The first call should return all cookies in set-cookies:\n" + await getSetCookieHeaderFromResponse(cookiedUrl, cookieJar))
+console.log("The second call should return a subset of, or nil, cookies in set-cookies:\n" + await getSetCookieHeaderFromResponse(cookiedUrl, cookieJar))
 
-await agent
-.get(cookiedUrl)
-.then(data => {
-    console.log("agent.request() response 2:")
-    console.log(prettyPrint(data.req['_header']))
-    //console.log(prettyPrint(Object.keys(data.headers)))
-    console.log(data.headers['set-cookie'])
-})
+
+
 
 
 
