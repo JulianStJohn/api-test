@@ -1,4 +1,4 @@
-import { CookieJar } from "./superagent-spike.js";
+import { CookieJar } from "../shared/cookiejar.js";
 import { strict as assert } from 'node:assert';
  
 const jar = new CookieJar();

@@ -4,5 +4,9 @@
     "mocha": "^10.0.0",
     "superagent": "^8.0.0"
   },
-  "type": "module"
+  "type": "module",
+  "main": "./exploratory/challenge-sessions.js",
+  "scripts": {
+    "test" :  "./node_modules/mocha/bin/mocha.js tests/**/*spec.js --reporter spec"
+  }
 }
