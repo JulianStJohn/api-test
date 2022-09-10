@@ -15,6 +15,7 @@ The two purposes of this repo are:
 * browse to `http://localhost:4567` to ensure the API is running and accessible
 * Run the challenges: `node .`
 * Run the tests for this module `npm test`
+* Run the cuke scripts: `npx cucumber-js --format @cucumber/pretty-formatter`
 
 ## Notes
 
