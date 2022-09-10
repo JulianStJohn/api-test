@@ -15,3 +15,7 @@ The two purposes of this repo are:
 * browse to `http://localhost:4567` to ensure the API is running and accessible
 * Run the challenges: `node .`
 * Run the tests for this module `npm test`
+
+## Notes
+
+* cucumber.js [does not support native js module imports](https://github.com/cucumber/cucumber-js/issues/1304) so I have included a package.json file containing `"type": "commonjs"` in the `features/support` and `shared/models` directories. 
