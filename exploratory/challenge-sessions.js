@@ -8,4 +8,12 @@ let challengerHeaders = await request.post(conf.apiUrl + "/challenger").then( re
     return res.headers
 })
 let xchallengerHeader = challengerHeaders['x-challenger'] 
-console.log(xchallengerHeader)
+console.log("x-challenger header: " + xchallengerHeader)
+
+let challengesResponse = await request.get(conf.apiUrl + "/challenges").then ( res => { return res});
+//challengesResponse.body.challenges.forEach((challenge) => { console.log(challenge['id'])})
+console.log(challengesResponse.body.challenges.length)
+
+//console.log(prettyPrint(challengesResponse.body))
+
+// could use https://github.com/sanack/node-jq here. 
