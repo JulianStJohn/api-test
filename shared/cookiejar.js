@@ -7,7 +7,7 @@
 //   * calls to 'https://www.realestate.com.au' will respond with 'set-cooki when made from request.agent().get, 
 // So I'm using my own custom cookie jar: 
 
-export class CookieJar {
+class CookieJar {
 
     // First version of this class discards most of the information and just saves the 
     // cookie under the hostname. 
@@ -16,6 +16,7 @@ export class CookieJar {
         // store cookies as a key value pair - key is the domain for the time being
         this.cookies = {};
         this.cookieInformationKeys = ['Expires','Max-Age','Domain','Path','SameSite','securityPolicy']
+
     }
     parseCookieString(cookieString){
         /* 
@@ -73,3 +74,5 @@ export class CookieJar {
        this.cookies[hostName].join("; ")
     }
 }
+
+module.exports = CookieJar
