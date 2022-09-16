@@ -1,6 +1,6 @@
 // https://visionmedia.github.io/superagent/
-import  request from 'superagent' // require('superagent')
-import { CookieJar } from '../shared/cookiejar.js'
+import request from 'superagent' 
+import CookieJar from '../shared/cookiejar.js'
 import { prettyPrint } from '@base2/pretty-print-object';
 
 // where using superagent to request an html endpoint, text() returns the data
