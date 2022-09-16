@@ -123,6 +123,65 @@ _Some assumptions I would make about the /todos endpoint that I would like to te
 
 --- 
 
+## Charter: 'todo' endpoint CRUD validations  
+
+* can't POST a todo with a doneStatus of true
+* can't POST a todo with extra fields
+* can delete a record
+    * error deleting a record that has already been deleted
+* where an id has been skipped due to an invalid create, 
+    * the skipped id cannot be deleted 
+    * the skipped id will always prevent that id being used for a valid record.
+* test if POST todos/id can be used to update record details and if so:
+    * id is immutable
+    * the new record is returned
+    * updates that do not change the values give feedback that the values are unchanged 
+    * can't update an id that isn't associated with a record (e.g. where an invalid post caused an id value to be skipped) 
+* there is character length restriction around title and description
+* values are sanitised on processing 
+
+### Session Details
+* **Date:** 
+* **Start:**  7.15pm
+* **Duration:** 45m
+* **Tester:** Julian
+
+### Tools
+
+### Files 
+
+### Test Notes 
+
+_Create_
+
+* can POST a todo with doneStatus of true
+* can't POST a todo with a doneStatus of 'true' `Failed Validation: doneStatus should be BOOLEAN\`
+* can't POST a todo with an extra field `Could not find field: extrafield\`
+
+
+_Delete_
+
+* Can delete a record: `/todos/{id}`
+* Can't delete a previously deleted record `Could not find any instances with todos/15\`
+* Tools: where establishing skipped IDs, use jq and sort to filter just the id numbers: `node ./exploratory/todo.js | jq '.todos[] | .id' | sort`
+* Tools: I just ran three functions in the `todo.js` script in the one execution - they didn't complete in order as they are async. Should handle this if compiling more complex scripts 
+* where an id has been skipped due to an invalid create, 
+    * Verified: the skipped id cannot be deleted 
+    * Verified: the skipped id will always prevent that id being used for a valid record.
+
+_Update_
+* records can be updated with POST /todos/{id}
+* id is ignored when supplied in the data object 
+* extra fields cause an error
+* all fields not manadatory - where a field is not supplied it will not be updated
+* no difference in response beteween updates that did or didn't affect an existing record, where the updates were valid. 
+* Can't update a record taht doesn't exist: `No such todo entity instance with GUID or ID 18 found\"`
+
+### Summary 
+
+## Issues
+
+--- 
 ## Charter:
 
 ### Session Details

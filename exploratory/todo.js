@@ -58,8 +58,10 @@ const postTodos = (sendObj) => {
 
 // Test that we are prevented from specifying an id when creating a record
 //let sendObj = {'title':'test3','id':13}
-let sendObj = {'title':'ggoK01DZCweTwYOMzZQbOZuChWG6BW2ogGnrpHIMbHU8ChSs9M6rf7hdEvx4AOV9NK2whltrjLE3SKqytxMkgIxUrBfttONmGEXtpajUFvSrQt1lixqhTwC9IQbrPqTIaQCCXD4qMRXFxnx4sOxKn0AO6VSGOCuEHcSIO5hdjHaaO0GIh45W6ynv53A0nxBTqP929aQB'}
+//let sendObj = {'title':'ggoK01DZCweTwYOMzZQbOZuChWG6BW2ogGnrpHIMbHU8ChSs9M6rf7hdEvx4AOV9NK2whltrjLE3SKqytxMkgIxUrBfttONmGEXtpajUFvSrQt1lixqhTwC9IQbrPqTIaQCCXD4qMRXFxnx4sOxKn0AO6VSGOCuEHcSIO5hdjHaaO0GIh45W6ynv53A0nxBTqP929aQB'}
 //postTodos(sendObj);
+
+
 
 
 const optionsTodos = () => {
@@ -75,4 +77,54 @@ const headTodosWithId = (id) => {
     .then(  (response) => { console.log(JSON.stringify(response)) },
             (error) => { console.log(JSON.stringify(error)) })
 }
-headTodosWithId(1)
+//headTodosWithId(1)
+
+const headTodos = () => {
+    request.head(`${config.apiUrl}/todos`)
+    .then(  (response) => { console.log(JSON.stringify(response)) },
+            (error) => { console.log(JSON.stringify(error)) })
+}
+
+const deleteWithId = (id) => {
+    request.delete(`${config.apiUrl}/todos/${id}`)
+    .then(  (response) => { console.log(JSON.stringify(response)) },
+            (error) => { console.log(JSON.stringify(error)) })
+}
+
+const update = (id, sendObj) => {
+    request.post(`${config.apiUrl}/todos/${id}`)
+        .send(sendObj)
+        .then(  (response) => { console.log(JSON.stringify(response)) },
+                (error) => { console.log(JSON.stringify(error)) })
+}
+
+const getFilteredtodos = () => {
+    request.get(`${config.apiUrl}/todos?doneStatus=true`)
+    .then(  (response) => { console.log(JSON.stringify(response)) },
+            (error) => { console.log(JSON.stringify(error)) })
+}
+ 
+
+// can't post with donestatus of true
+let sendObj = {
+                //'title':'this is still x23', 
+                //'description':'testing for skipped ',
+                'doneStatus': true
+            }
+//postTodos(sendObj);
+//getTodosWithId('17')
+//deleteWithId(15)
+
+//update(10, sendObj)
+//update(1, sendObj)
+
+//deleteWithId(18)
+//deleteWithId(17)
+//deleteWithId(16) 
+// getTodos()
+
+//postTodos(sendObj)
+//getTodos()
+//getTodosWithId(23)
+
+getFilteredtodos()
