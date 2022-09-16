@@ -17,6 +17,18 @@ const getTodos = () => {
 const getTodo = () => {
     request.get(`${config.apiUrl}/todo`).then((response) => { 
         //console.log(JSON.stringify(response))
+        console.log(response.text)
+    }).catch((error) => {
+        //console.log(error.name)
+        if(error.message == "Not Found"){
+            console.log(JSON.stringify(error)) 
+        }
+    })
+}
+
+const getTodosWithId = (id) => {
+    request.get(`${config.apiUrl}/todos/${id}`).then((response) => { 
+        console.log(JSON.stringify(response))
         //console.log(response.text)
     }).catch((error) => {
         //console.log(error.name)
@@ -26,6 +38,41 @@ const getTodo = () => {
     })
 }
 
-getTodo()
+//getTodos()
+//getTodosWithId(4)
+//getTodosWithId(-1)
+
+const postTodos = (sendObj) => {
+    request.post(`${config.apiUrl}/todos`)
+        .send(sendObj)
+        .then(
+            (response) => { 
+            console.log(JSON.stringify(response))
+            //console.log(response.text)
+        },
+            (error) => {
+            //console.log(error.name)
+            console.log(JSON.stringify(error)) 
+        })
+}
+
+// Test that we are prevented from specifying an id when creating a record
+//let sendObj = {'title':'test3','id':13}
+let sendObj = {'title':'ggoK01DZCweTwYOMzZQbOZuChWG6BW2ogGnrpHIMbHU8ChSs9M6rf7hdEvx4AOV9NK2whltrjLE3SKqytxMkgIxUrBfttONmGEXtpajUFvSrQt1lixqhTwC9IQbrPqTIaQCCXD4qMRXFxnx4sOxKn0AO6VSGOCuEHcSIO5hdjHaaO0GIh45W6ynv53A0nxBTqP929aQB'}
+//postTodos(sendObj);
 
 
+const optionsTodos = () => {
+    request.options(`${config.apiUrl}/todos`)
+        .then((response) => { console.log(JSON.stringify(response)) },
+              (error) => { console.log(JSON.stringify(error)) })
+}
+
+//optionsTodos();
+
+const headTodosWithId = (id) => {
+    request.head(`${config.apiUrl}/todos/${id}`)
+    .then(  (response) => { console.log(JSON.stringify(response)) },
+            (error) => { console.log(JSON.stringify(error)) })
+}
+headTodosWithId(1)

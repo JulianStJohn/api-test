@@ -17,11 +17,8 @@ _I'll be using Jon Bach's Session Based Test Management approach, with a set foc
 * **Duration:** 45 minutes
 * **Tester:** Julian
 
-### Task Breadown
- * Perform get request on todos and todo
- * Output meaningful details for the request / response 
-
 ### Tools
+node.js, superagent
 
 ### Files
 * /exploratory/todo.js
@@ -60,5 +57,86 @@ _/todos_
 
 * Not requiring the `x-challenger` header for single user seems to contradict the documentation.
 
+
 --- 
 
+## Charter: Familiarisation with the behaviour of 'todo' REST record (Repeat)
+
+* Explore GET, POST on /todos to retrieve and create records
+* Examine, trigger validation behaviour on creating records
+* Test OPTIONS
+
+### Session Details
+* **Date:** Friday 16/9/22 
+* **Start:** 2pm 
+* **Duration:** 45m
+* **Tester:** Julian
+
+### Tools
+node.js, superagent
+
+### Files 
+* /exploratory/todo.js
+
+### Test Notes 
+
+_GET /todos_
+
+* `todos/{id}` returns the correct todo record compared with `todos`
+* `todos/{id}` returns an error where id is not 1..10 
+
+_POST /todos_
+
+* POST with no data returns a 400 `errorMessages\":[\"title : field is mandatory\"]}"}`
+* PUT with no data returns a 405 (method not allowed)
+* POST with only title defined responds 201, with text: `{\"id\":12,\"title\":\"test\",\"doneStatus\":false,\"description\":\"\"}"}`
+* the id seems to have skipped 11 - possibly an invalid post still increments the record count?
+* Observation: Challenge-wise, you can complete steps out of order. 
+* Repeated steps: post empty, post empty, post title only
+* Observation: Confirmed post invalid record increments the counter
+* the 'location' header given on successful post gives the new id; `location": "todos/15",`
+* posting with an id responds with 400, `{\"errorMessages\":[\"Invalid Creation: Failed Validation: Not allowed to create with id\"]}"` 
+
+_OPTIONS_
+
+* OPTIONS returns `OPTIONS, GET, HEAD, POST`
+
+_Some assumptions I would make about the /todos endpoint that I would like to test:_
+
+* there is character length restriction around title and description
+* values are sanitised on processing 
+* can't POST a todo with a doneStatus of true
+* test if POST todos/id can be used to update record details
+* if updates are possible, that we can't update a record to change the id 
+
+
+### Summary 
+
+* GET, POST, OPTIONS work as expected
+* 'location' header gives the created record path
+* For the ET challenge, you can complete steps out of order. 
+* Further assumptions to test noted
+
+## Issues
+
+* POST with an invalid data increments the record count
+
+--- 
+
+## Charter:
+
+### Session Details
+* **Date:** 
+* **Start:**  
+* **Duration:** 
+* **Tester:** Julian
+
+### Tools
+
+### Files 
+
+### Test Notes 
+
+### Summary 
+
+## Issues
